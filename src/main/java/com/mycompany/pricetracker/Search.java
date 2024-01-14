@@ -4,17 +4,35 @@
  */
 package com.mycompany.pricetracker;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author USER
  */
 public class Search extends javax.swing.JFrame {
+    private DefaultTableModel tableModel;
+    
 
     /**
      * Creates new form Main
      */
     public Search() {
         initComponents();
+        setIconImage(new ImageIcon(getClass().getResource("/images/icon.png")).getImage());
+        tableModel = (DefaultTableModel) jTable1.getModel();
     }
 
     /**
@@ -28,21 +46,58 @@ public class Search extends javax.swing.JFrame {
 
         jTextField1 = new javax.swing.JTextField();
         jButton6 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("GOBLOCK Price Tracker");
 
+        jTextField1.setFont(new java.awt.Font("Poppins Medium", 0, 12)); // NOI18N
         jTextField1.setText("jTextField1");
 
+        jButton6.setFont(new java.awt.Font("Poppins Medium", 0, 12)); // NOI18N
         jButton6.setText("Search");
-
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
         });
-        jScrollPane1.setViewportView(jList1);
+
+        jTable1.setFont(new java.awt.Font("Poppins Medium", 0, 12)); // NOI18N
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Item code", "Item", "Unit", "Category"
+            }
+        ));
+        jScrollPane2.setViewportView(jTable1);
+
+        jButton1.setBackground(new java.awt.Color(255, 172, 172));
+        jButton1.setFont(new java.awt.Font("Poppins Medium", 0, 12)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 77, 77));
+        jButton1.setText("Remove");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setBackground(new java.awt.Color(229, 237, 251));
+        jButton2.setFont(new java.awt.Font("Poppins Medium", 0, 12)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(81, 144, 255));
+        jButton2.setText("Modify");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -50,11 +105,17 @@ public class Search extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -64,17 +125,126 @@ public class Search extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton6))
-                .addGap(6, 6, 6)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(89, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton1))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        String searchKey = jTextField1.getText().toLowerCase();
+        List<String> results = getWordList(searchKey);
+        displaySearchResults(results);
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow != -1) {
+            String itemCode = tableModel.getValueAt(selectedRow, 0).toString();
+            removeItemFromDatabase(itemCode);
+            tableModel.removeRow(selectedRow);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a row to remove.");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        int selectedRow = jTable1.getSelectedRow();
+    if (selectedRow != -1) {
+        String itemCode = tableModel.getValueAt(selectedRow, 0).toString();
+        modifySelectedRow(itemCode);
+    } else {
+        JOptionPane.showMessageDialog(this, "Please select a row to modify.");
+    }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
+    
+    private void removeItemFromDatabase(String itemCode) {
+        try (Connection connection = DriverManager.getConnection(Relate.JDBC_URL, Relate.DB_USER, Relate.DB_PASSWORD)) {
+            String query = "DELETE FROM your_table_name WHERE item_code = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, itemCode);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle the exception (e.g., show an error message)
+        }
+    }
+    
+    private void modifySelectedRow(String itemCode) {
+    // Assuming that the columns for Unit and Category are editable in the table
+    int selectedRow = jTable1.getSelectedRow();
+    String newItem = tableModel.getValueAt(selectedRow, 2).toString(); // Assuming unit is in the third column
+    String newUnit = tableModel.getValueAt(selectedRow, 3).toString();
+    String newCategory = tableModel.getValueAt(selectedRow, 4).toString(); // Assuming category is in the fourth column
+
+    try (Connection connection = DriverManager.getConnection(Relate.JDBC_URL, Relate.DB_USER, Relate.DB_PASSWORD)) {
+        String updateQuery = "UPDATE LOOKUP_ITEM SET item = ?, unit = ?,item_category = ?, WHERE item_code = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+            preparedStatement.setString(1, newItem);
+            preparedStatement.setString(2, newUnit);
+            preparedStatement.setString(3, newCategory);
+            preparedStatement.setString(4, itemCode);
+            preparedStatement.executeUpdate();
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        // Handle the exception (e.g., show an error message)
+    }
+
+    JOptionPane.showMessageDialog(this, "Row updated successfully in the database.");
+}
+
+    
+    
+ 
+    
+    private List<String> getWordList(String searchKey) {
+         Set<String> items = new TreeSet<>(Comparator.naturalOrder());
+
+        try (Connection connection = DriverManager.getConnection(Relate.JDBC_URL, Relate.DB_USER, Relate.DB_PASSWORD)) {
+            String query = "SELECT item FROM lookup_item WHERE item LIKE ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, "%" + searchKey + "%");
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        items.add(resultSet.getString("item"));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Convert the TreeSet to an ArrayList
+        return new ArrayList<>(items);
+    }
+
+    private void displaySearchResults(List<String> results) {
+    tableModel.setRowCount(0);
+
+    for (String result : results) {
+        String itemCode = Relate.getItemCodeFromName(result);
+        String unit = Relate.getItemGroupFromCode(itemCode); // You need to adjust this based on your schema
+        String category = Relate.getItemCategoryFromCode(itemCode); // You need to adjust this based on your schema
+
+        // Add parsed data to the table
+        tableModel.addRow(new Object[]{itemCode, result, unit, category});
+    }
+}
+
+
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -111,9 +281,11 @@ public class Search extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton6;
-    private javax.swing.JList<String> jList1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

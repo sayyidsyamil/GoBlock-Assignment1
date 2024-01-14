@@ -4,20 +4,9 @@
  */
 package com.mycompany.pricetracker;
 
-import static com.mysql.cj.conf.PropertyKey.PASSWORD;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -28,7 +17,11 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
+import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -39,14 +32,14 @@ import java.sql.ResultSet;
 public class Main extends javax.swing.JFrame {
     
     public static int userId;
-    public static String publicPath = "C:/Users/USER/Documents/NetBeansProjects/PriceTracker/pricecatcher_2023-08.csv";
+
+    // had to change bcs spectrum limit to 20mb file only
+    public static String publicPath = Relate.localFilePath;
     
-    private static final String JDBC_URL = "jdbc:mysql://sql12.freesqldatabase.com:3306/sql12673794";
-    private static final String DB_USER = "sql12673794";
-    private static final String DB_PASSWORD = "jUagV5ukYC";
+
     
     private void connectToDatabase() throws SQLException {
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASSWORD);
+        try (Connection connection = DriverManager.getConnection(Relate.JDBC_URL, Relate.DB_USER, Relate.DB_PASSWORD);
              Statement statement = connection.createStatement()) {
 
             // Create lookup_item table
@@ -63,7 +56,7 @@ public class Main extends javax.swing.JFrame {
             String createPremiseTable = "CREATE TABLE IF NOT EXISTS lookup_premise ("
                     + "premise_code VARCHAR(255) PRIMARY KEY,"
                     + "premise VARCHAR(255) NOT NULL,"
-                    + "address VARCHAR(255),"
+                    + "address TEXT,"
                     + "premise_type VARCHAR(255),"
                     + "state VARCHAR(255),"
                     + "district VARCHAR(255)"
@@ -91,12 +84,24 @@ statement.executeUpdate(createShoppingCartTable);
         try {
             this.userId = userId;
             initComponents();
-            connectToDatabase();
+            System.out.println(publicPath);
+            setIconImage(new ImageIcon(getClass().getResource("/images/icon.png")).getImage());            
+            connectToDatabase(); 
             insertDataFromCSV("https://storage.data.gov.my/pricecatcher/lookup_item.csv", "lookup_item");
             insertDataFromCSV("https://storage.data.gov.my/pricecatcher/lookup_premise.csv", "lookup_premise");
+            // Set the text of jLabel1 to "Welcome, <username>"
+            jLabel1.setText("Welcome, @" + Login.getUsername);
+            
+
+
+
+            
         } catch (SQLException e) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
         }
+        
+        
+        
     }
 
     /**
@@ -108,98 +113,223 @@ statement.executeUpdate(createShoppingCartTable);
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLayeredPane2 = new javax.swing.JLayeredPane();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("GOBLOCK Price Tracker");
+        setForeground(java.awt.Color.white);
+        setResizable(false);
 
+        jLayeredPane2.setBackground(new java.awt.Color(255, 255, 255));
+        jLayeredPane2.setForeground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setFont(new java.awt.Font("Poppins SemiBold", 0, 18)); // NOI18N
         jLabel1.setText("Welcome, user! ");
 
-        jLabel2.setText("Your shopping partner. All in one.");
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/gOblock.png"))); // NOI18N
 
-        jButton1.setText("Settings");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("Cart");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton3.setText("Import");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
-        jButton4.setText("Search for a Product");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        jButton5.setText("Browse by Categories");
+        jButton5.setBackground(new java.awt.Color(255, 226, 172));
+        jButton5.setFont(new java.awt.Font("Poppins SemiBold", 0, 12)); // NOI18N
+        jButton5.setForeground(new java.awt.Color(255, 190, 69));
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/browse.png"))); // NOI18N
+        jButton5.setText("Browse");
+        jButton5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jButton5.setBorderPainted(false);
+        jButton5.setFocusable(false);
+        jButton5.setHideActionText(true);
+        jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton5.setIconTextGap(20);
+        jButton5.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jButton5.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
             }
         });
 
+        jButton3.setBackground(new java.awt.Color(229, 237, 251));
+        jButton3.setFont(new java.awt.Font("Poppins SemiBold", 0, 12)); // NOI18N
+        jButton3.setForeground(new java.awt.Color(81, 144, 255));
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/import.png"))); // NOI18N
+        jButton3.setText("Import");
+        jButton3.setToolTipText("");
+        jButton3.setAlignmentY(0.0F);
+        jButton3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jButton3.setBorderPainted(false);
+        jButton3.setFocusable(false);
+        jButton3.setHideActionText(true);
+        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton3.setIconTextGap(20);
+        jButton3.setMargin(new java.awt.Insets(2, 14, 2, 14));
+        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton4.setBackground(new java.awt.Color(211, 228, 186));
+        jButton4.setFont(new java.awt.Font("Poppins SemiBold", 0, 12)); // NOI18N
+        jButton4.setForeground(new java.awt.Color(127, 187, 38));
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/search.png"))); // NOI18N
+        jButton4.setText("Search");
+        jButton4.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jButton4.setFocusable(false);
+        jButton4.setHideActionText(true);
+        jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton4.setIconTextGap(20);
+        jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setBackground(new java.awt.Color(255, 172, 172));
+        jButton2.setFont(new java.awt.Font("Poppins SemiBold", 0, 12)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 77, 77));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cart.png"))); // NOI18N
+        jButton2.setText("Cart");
+        jButton2.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jButton2.setBorderPainted(false);
+        jButton2.setFocusable(false);
+        jButton2.setHideActionText(true);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setIconTextGap(20);
+        jButton2.setMargin(new java.awt.Insets(2, 14, 2, 14));
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton1.setBackground(new java.awt.Color(204, 204, 204));
+        jButton1.setFont(new java.awt.Font("Poppins SemiBold", 0, 12)); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/settings.png"))); // NOI18N
+        jButton1.setText("Setting");
+        jButton1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jButton1.setBorderPainted(false);
+        jButton1.setFocusable(false);
+        jButton1.setHideActionText(true);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setIconTextGap(20);
+        jButton1.setMargin(new java.awt.Insets(2, 14, 2, 14));
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Poppins Medium", 0, 12)); // NOI18N
+        jLabel4.setText("What are you going to do today?");
+
+        jLayeredPane2.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane2.setLayer(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane2.setLayer(jButton5, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane2.setLayer(jButton3, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane2.setLayer(jButton4, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane2.setLayer(jButton2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane2.setLayer(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane2.setLayer(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout jLayeredPane2Layout = new javax.swing.GroupLayout(jLayeredPane2);
+        jLayeredPane2.setLayout(jLayeredPane2Layout);
+        jLayeredPane2Layout.setHorizontalGroup(
+            jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jLayeredPane2Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jLayeredPane2Layout.createSequentialGroup()
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jLayeredPane2Layout.createSequentialGroup()
+                        .addGroup(jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(269, 269, 269)
+                        .addComponent(jLabel2)))
+                .addGap(0, 25, Short.MAX_VALUE))
+        );
+        jLayeredPane2Layout.setVerticalGroup(
+            jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane2Layout.createSequentialGroup()
+                .addGroup(jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jLayeredPane2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addGroup(jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane2Layout.createSequentialGroup()
+                        .addGroup(jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(7, 7, 7))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane2Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jLayeredPane2Layout.createSequentialGroup()
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
+        );
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Group 9.png"))); // NOI18N
+
+        jLabel5.setText("Important! Please import price catcher data first to use the app.");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addComponent(jLayeredPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 569, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                .addGap(14, 14, 14)
+                .addComponent(jLayeredPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Choose a CSV file");
@@ -267,34 +397,36 @@ statement.executeUpdate(createShoppingCartTable);
     /**
      * @param args the command line arguments
      */
-    private void insertDataFromCSV(String csvURL, String tableName) {
-        try {
-            URL url = new URL(csvURL);
-            Path tempFile = Files.createTempFile("temp", ".csv");
-            Files.copy(url.openStream(), tempFile, StandardCopyOption.REPLACE_EXISTING);
+    
+    private void insertDataFromCSV(String csvUrl, String tableName) {
+        try (Connection connection = DriverManager.getConnection(Relate.JDBC_URL, Relate.DB_USER, Relate.DB_PASSWORD);
+             Statement statement = connection.createStatement()) {
 
-            try (CSVReader reader = new CSVReader(new FileReader(tempFile.toFile()));
-                 Connection connection = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASSWORD)) {
+            // Check if the table already has data
+            if (tableHasData(statement, tableName)) {
+                System.out.println(tableName + " table already has data. Skipping insertion.");
+                return;
+            }
 
-                if (tableHasData(connection, tableName)) {
-                    System.out.println(tableName + " table already contains data. Skipping insertion.");
-                    return;
+            // Read CSV data from the provided URL
+            try (CSVReader csvReader = new CSVReader(new InputStreamReader(new URL(csvUrl).openStream()))) {
+                String[] header = csvReader.readNext(); // Read the header line
+
+                // Prepare the SQL statement for insertion
+                String insertQuery = "INSERT INTO " + tableName + " (" + String.join(",", header) + ") VALUES (";
+
+                for (int i = 0; i < header.length; i++) {
+                    insertQuery += "?,";
                 }
 
-                String[] header = reader.readNext();
+                insertQuery = insertQuery.substring(0, insertQuery.length() - 1) + ")";
 
-                String[] data;
-                while ((data = reader.readNext()) != null) {
-                    String code = data[0];
-                    if (shouldSkipInsertion(connection, tableName, code)) {
-                        continue;
-                    }
-
-                    String insertStatement = buildInsertStatement(header, tableName);
-
-                    try (PreparedStatement preparedStatement = connection.prepareStatement(insertStatement)) {
-                        for (int i = 0; i < data.length; i++) {
-                            preparedStatement.setString(i + 1, data[i]);
+                // Insert each row of data into the table
+                String[] nextLine;
+                while ((nextLine = csvReader.readNext()) != null) {
+                    try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+                        for (int i = 0; i < nextLine.length; i++) {
+                            preparedStatement.setString(i + 1, nextLine[i]);
                         }
                         preparedStatement.executeUpdate();
                     }
@@ -302,62 +434,22 @@ statement.executeUpdate(createShoppingCartTable);
 
                 System.out.println("Data inserted into " + tableName + " table successfully.");
             }
-        } catch (IOException | SQLException | CsvValidationException  e) {
+
+        } catch (IOException | SQLException | CsvValidationException e) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
         }
     }
-
-    private String buildInsertStatement(String[] header, String tableName) {
-        StringBuilder insertStatement = new StringBuilder("INSERT INTO " + tableName + " (");
-        for (String column : header) {
-            insertStatement.append(column).append(",");
-        }
-        insertStatement.deleteCharAt(insertStatement.length() - 1);
-        insertStatement.append(") VALUES (");
-
-        for (int i = 0; i < header.length; i++) {
-            insertStatement.append("?,");
-        }
-        insertStatement.deleteCharAt(insertStatement.length() - 1);
-        insertStatement.append(")");
-
-        return insertStatement.toString();
-    }
-
-    private boolean shouldSkipInsertion(Connection connection, String tableName, String code) {
-        return code.equals("-1") || codeExists(connection, tableName, code);
-    }
-
-    private boolean codeExists(Connection connection, String tableName, String code) {
-        String query = "SELECT COUNT(*) FROM " + tableName + " WHERE item_code = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, code);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    int count = resultSet.getInt(1);
-                    return count > 0;
-                }
-            }
-        } catch (SQLException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return false;
-    }
-
-    private boolean tableHasData(Connection connection, String tableName) {
-        String query = "SELECT COUNT(*) FROM " + tableName;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+    
+    private boolean tableHasData(Statement statement, String tableName) throws SQLException {
+        String countQuery = "SELECT COUNT(*) FROM " + tableName;
+        try (ResultSet resultSet = statement.executeQuery(countQuery)) {
             if (resultSet.next()) {
-                int count = resultSet.getInt(1);
-                return count > 0;
+                int rowCount = resultSet.getInt(1);
+                return rowCount > 0;
             }
-        } catch (SQLException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
         }
         return false;
     }
-
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -401,5 +493,9 @@ statement.executeUpdate(createShoppingCartTable);
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLayeredPane jLayeredPane2;
     // End of variables declaration//GEN-END:variables
 }
