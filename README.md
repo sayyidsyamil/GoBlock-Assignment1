@@ -1,6 +1,6 @@
 # WIX 1002 Fundamental of Programming 2023/2024 - Price Comparison Program
 
-## FOP ASSIGNMENT: TECHNICAL REPORT
+## FOP ASSIGNMENT
 
 ### Team Members:
 - SAYYID SYAMIL BIN SYED MOHAMED (S2194337)
