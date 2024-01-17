@@ -184,12 +184,12 @@ public class Search extends javax.swing.JFrame {
     private void modifySelectedRow(String itemCode) {
     // Assuming that the columns for Unit and Category are editable in the table
     int selectedRow = jTable1.getSelectedRow();
-    String newItem = tableModel.getValueAt(selectedRow, 2).toString(); // Assuming unit is in the third column
-    String newUnit = tableModel.getValueAt(selectedRow, 3).toString();
-    String newCategory = tableModel.getValueAt(selectedRow, 4).toString(); // Assuming category is in the fourth column
+    String newItem = tableModel.getValueAt(selectedRow, 1).toString(); // Assuming unit is in the third column
+    String newUnit = tableModel.getValueAt(selectedRow, 2).toString();
+    String newCategory = tableModel.getValueAt(selectedRow, 3).toString(); // Assuming category is in the fourth column
 
     try (Connection connection = DriverManager.getConnection(Relate.JDBC_URL, Relate.DB_USER, Relate.DB_PASSWORD)) {
-        String updateQuery = "UPDATE LOOKUP_ITEM SET item = ?, unit = ?,item_category = ?, WHERE item_code = ?";
+        String updateQuery = "UPDATE lookup_item SET item = ?, unit = ?,item_category = ? WHERE item_code = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setString(1, newItem);
             preparedStatement.setString(2, newUnit);
